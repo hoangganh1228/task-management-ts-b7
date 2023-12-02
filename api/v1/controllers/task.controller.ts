@@ -1,7 +1,9 @@
 import { Request, Response } from "express";
 import Task from "../models/task.model";
+import { title } from "process";
 
 export const index =  async (req: Request, res: Response) => {
+  // Find
   interface Find {
     deleted: boolean,
     status?: string
@@ -13,8 +15,20 @@ export const index =  async (req: Request, res: Response) => {
   if(req.query.status) {
     find.status = req.query.status.toString();
   }
+  // End find
 
-  const tasks = await Task.find(find);
+  // Sort 
+  
+  const sort = {};
+  if(req.query.sortKey && req.query.sortValue) {
+    const sortKey = req.query.sortKey.toString()
+    sort[sortKey] = req.query.sortValue;
+    
+  }
+
+  //End Sort
+
+  const tasks = await Task.find(find).sort(sort);
 
   res.json(tasks);
 }
